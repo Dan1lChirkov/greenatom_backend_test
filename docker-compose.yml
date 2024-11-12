@@ -1,0 +1,28 @@
+version: '3.8'
+volumes:
+  pg_data:
+  static:
+
+services:
+  db:
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    image: danilch1rkov/backend
+    env_file: .env
+    volumes:
+      - static:/app/collected_static
+    depends_on:
+      - db
+  nginx:
+    image: danilch1rkov/nginx
+    env_file: .env
+    volumes:
+      - static:/staticfiles
+    depends_on:
+      - backend
+    ports:
+      - 8000:80
